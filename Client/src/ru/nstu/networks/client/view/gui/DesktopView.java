@@ -4,6 +4,8 @@ import ru.nstu.networks.client.controller.Controller;
 import ru.nstu.networks.client.view.View;
 
 import javax.swing.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class DesktopView implements View {
     private Controller controller;
@@ -23,6 +25,26 @@ public class DesktopView implements View {
             JLabel inputUsernameLabel = new JLabel("Your name:");
             JTextField inputUsernameTextField = new JTextField("hello", 15);
 
+            JButton connectButton = new JButton("Connect");
+            connectButton.addActionListener(e -> {
+                try {
+                    String serverAddress = inputAddressTextField.getText();
+                    int port = Integer.parseInt(inputPortTextField.getText());
+                    String username = inputUsernameTextField.getText();
+
+                    controller.startModel(InetAddress.getByName(serverAddress), port, username);
+                } catch (UnknownHostException ex) {
+                    JOptionPane.showMessageDialog(frame, "Unknown host name.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Port must be an integer.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } catch (NullPointerException ex) {
+                    JOptionPane.showMessageDialog(frame, "All fields are required.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
@@ -35,6 +57,7 @@ public class DesktopView implements View {
             panel.add(inputUsernameLabel);
             panel.add(inputUsernameTextField);
 
+            panel.add(connectButton);
             frame.add(panel);
         });
     }
